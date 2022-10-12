@@ -1,5 +1,4 @@
 import numpy as np
-import torch
 from utils import set_dropout
 from surrogates import perturbation_score, grad_norm_score, mc_dropout_score, datafree_kd_score
 
