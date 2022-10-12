@@ -2,9 +2,9 @@ import numpy as np
 import torch
 from utils import inference, datafree_kd
 
-def perturbation_score(net, test_loader,Y_tst_hat, perturbation_std=0.05):
+def perturbation_score(net, X_tst, perturbation_std=0.05, T=10):
 
-    score = np.mean([(inference(net, test_loader, use_input_perturbation = True, perturbation_std) - Y_tst_hat) ** 2 for _ in range(T)], 0)
+    score = np.mean([(inference(net, X_tst, use_input_perturbation = True, perturbation_std=perturbation_std) - inference(net, X_tst)) ** 2 for _ in range(T)], 0)
     
     return score
 
@@ -27,14 +27,14 @@ def grad_norm_score(net, X_tst):
         
     return np.array(score)
 
-def mc_dropout_score(net, test_loader, Y_tst_hat):
+def mc_dropout_score(net, X_tst, T=10):
     
-    score = np.mean([(inference(net, test_loader, use_MC_dropout = True) - Y_tst_hat) ** 2 for _ in range(T)], 0)
+    score = np.mean([(inference(net, X_tst, use_MC_dropout = True) - inference(net, X_tst)) ** 2 for _ in range(T)], 0)
     
     return score
 
-def datafree_kd_score(net, test_loader, Y_tst_hat):
+def datafree_kd_score(net, X_tst, T=10):
 
-    score = np.mean([(datafree_kd(net, test_loader) - Y_tst_hat) ** 2 for _ in range(T)], 0)
+    score = np.mean([(datafree_kd(net, X_tst) - inference(net, X_tst)) ** 2 for _ in range(T)], 0)
     
     return score

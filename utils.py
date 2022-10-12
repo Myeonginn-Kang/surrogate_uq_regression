@@ -3,6 +3,7 @@ import time
 import torch
 import torch.nn as nn
 from torch.optim import Adam, RMSprop
+from torch.utils.data import DataLoader
 
 
 class RegDataset():
@@ -123,7 +124,10 @@ def training(net, train_loader, val_loader, model_path, max_epochs = 500):
     return net, summary
     
 
-def inference(net, test_loader, use_input_perturbation = False, perturbation_std = 0.05, use_MC_dropout = False):
+def inference(net, X_tst, use_input_perturbation = False, perturbation_std = 0.05, use_MC_dropout = False, batch_size=50):
+    
+    test_set = RegDataset(X_tst, X_tst)
+    test_loader = DataLoader(dataset=test_set, batch_size=batch_size * 10, shuffle=False)
 
     def MC_dropout(model):
         for m in model.modules():
@@ -207,7 +211,7 @@ def datafree_kd(net, test_loader, dim_z = 50, beta = 1e-5, gamma = 1e-5, batch_s
             batch_ytp = net(batch_xp)
             batch_ysp = student(batch_xp) 
             
-            S_loss = torch.mean( alpha * torch.square(batch_ytg - batch_ysg) + (1 - alpha) * torch.square(batch_ytp - batch_ysp) )
+            S_loss = torch.mean(alpha * torch.square(batch_ytg - batch_ysg) + (1 - alpha) * torch.square(batch_ytp - batch_ysp) )
             
             optimizerS.zero_grad()
             S_loss.backward()
@@ -231,3 +235,13 @@ def datafree_kd(net, test_loader, dim_z = 50, beta = 1e-5, gamma = 1e-5, batch_s
     y_hat = np.vstack(y_hat).flatten()
     
     return y_hat
+
+def rejection_rmse(squared_error, score, rate):
+    
+    arg_id = np.argsort(score) # the smaller the better
+    squared_error = squared_error[arg_id]
+            
+    cnt = int(len(arg_id) * (100-rate)/100)
+    reject_rmse = np.sqrt(np.mean(squared_error[:cnt]))
+        
+    return reject_rmse
