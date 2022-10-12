@@ -1,6 +1,5 @@
 # surrogate_uq_regression
-PyTorch Implementation for surrogate approach to uncertainty quantification of neural networks for regression
-
+Source code for the paper: Surrogate approach to uncertainty quantification of neural networks for regression
 
 ## Components
 - **data/*** - data files
