@@ -4,7 +4,7 @@ from utils import set_dropout
 from surrogates import perturbation_score, grad_norm_score, mc_dropout_score, datafree_kd_score
 
 
-def calculate_score(net, X_tst, method, batch_size = 50, T = 10):
+def calculate_score(net, X_tst, method):
      
     if method == 'input_perturbation':
         uncertainty = perturbation_score(net, X_tst)
