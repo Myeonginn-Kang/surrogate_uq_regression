@@ -4,11 +4,11 @@ Source code for the paper: Surrogate approach to uncertainty quantification of n
 ## Components
 - **data/*** - data files
 - **model/*** - trained model files
+- **regression_model.py** - training and inference functions for the given regression network
+- **surrogates.py** - script for the proposed surrogates for uncertainty quantification: Input perturbation, Gradient norm, MC-dropout, Knowledge distillation, Ensemble
+- **uncertainty_score.py** - functions for calculating the uncertainty score from the proposed surrogate
+- **main.py** - script for overall running code
 - **data_stats.py** - summary statistics of datasets
-- **train_models.py** - model training
-- **surrogates.py** - Proposed surrogates for uncertainty quantification: Input perturbation, Gradient norm, MC-dropout, 'Knowledge distillation', 'Ensemble'
-- **calculate_score.py** - Calculating the uncertainty score from the proposed surrogate
-- **example.py** - Example code for obtaining the uncertainty scores of query instances
 - **utils.py**
 
 ## Dependencies
