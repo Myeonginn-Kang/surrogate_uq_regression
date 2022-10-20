@@ -73,5 +73,4 @@ if not os.path.isfile('./result.csv'):
 with open('./result.csv', 'a', newline='') as f:
     w = csv.writer(f)
     RMSE = rejection_rmse(SE, uncertainty)
-    print(RMSE)
     w.writerow([dname, seed, n_layers, method]+RMSE)
