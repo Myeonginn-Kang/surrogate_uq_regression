@@ -18,6 +18,7 @@ def gradnorm_score(net, X_tst):
 
 def mc_dropout_score(net, test_loader, T=10):
     
+    set_dropout(net, drop_rate=0.05)
     score = np.mean([(mc_dropout(net, test_loader) - inference(net, test_loader)) ** 2 for _ in range(T)], 0)
     
     return score
