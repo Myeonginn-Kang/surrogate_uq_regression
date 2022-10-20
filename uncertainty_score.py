@@ -48,6 +48,6 @@ def ensemble_score(net, test_loader, X_tst, dname, seed, n_layers, student_train
         student_training = True
     uncertainty4 = np.mean([(knowledge_distillation(net, test_loader, student_path='./KD/student_%s_%d_%d_%d.pt'%(dname, seed, n_layers, i),student_training=student_training) 
     - inference(net, test_loader)) ** 2 for i in range(T)], 0)
-    uncertainty = np.sqrt(uncertainty1) + np.sqrt(uncertainty2) + np.sqrt(uncertainty3) + np.sqrt(uncertainty4)
+    score = np.sqrt(uncertainty1) + np.sqrt(uncertainty2) + np.sqrt(uncertainty3) + np.sqrt(uncertainty4)
 
-    return uncertainty
+    return score
