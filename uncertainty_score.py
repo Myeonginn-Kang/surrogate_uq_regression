@@ -1,6 +1,6 @@
 import numpy as np
 from utils import set_dropout
-from surrogates import input_perturbation, gradient_norm, mc_dropout, datafree_kd
+from surrogates import input_perturbation, gradient_norm, mc_dropout, knowledge_distillation
 from regression_model import inference
 import os
 
@@ -22,13 +22,16 @@ def mc_dropout_score(net, test_loader, T=10):
     
     return score
 
-def datafree_kd_score(net, test_loader, dname, seed, n_layers, T=10):
+def kd_score(net, test_loader, dname, seed, n_layers, T=10):
 
     student_training = False
-    if not os.path.isfile(('./student/student_%s_%d_%d_0.pt')%(dname, seed, n_layers)):
+    if not os.path.isfile(('./KD/student_%s_%d_%d_0.pt')%(dname, seed, n_layers)):
         student_training = True
-    score = np.mean([(datafree_kd(net, test_loader, student_path='./student/student_%s_%d_%d_%d.pt'%(dname, seed, n_layers,T),student_training=student_training) 
-    - inference(net, test_loader)) ** 2 for _ in range(T)], 0)
+        print('Train student network for KD')
+    else: 
+        print('Student networks for KD exist')
+    score = np.mean([(knowledge_distillation(net, test_loader, student_path='./KD/student_%s_%d_%d_%d.pt'%(dname, seed, n_layers, i),student_training=student_training) 
+    - inference(net, test_loader)) ** 2 for i in range(T)], 0)
 
     return score
 
@@ -40,10 +43,10 @@ def ensemble_score(net, test_loader, X_tst, dname, seed, n_layers, student_train
     uncertainty3 = mc_dropout_score(net, test_loader)
     set_dropout(net, drop_rate=0)
     student_training = False
-    if not os.path.isfile(('./student/student_%s_%d_%d_0.pt')%(dname, seed, n_layers)):
+    if not os.path.isfile(('./KD/student_%s_%d_%d_0.pt')%(dname, seed, n_layers)):
         student_training = True
-    uncertainty4 = np.mean([(datafree_kd(net, test_loader, student_path='./student/student_%s_%d_%d_%d.pt'%(dname, seed, n_layers,T),student_training=student_training) 
-    - inference(net, test_loader)) ** 2 for _ in range(T)], 0)
+    uncertainty4 = np.mean([(knowledge_distillation(net, test_loader, student_path='./KD/student_%s_%d_%d_%d.pt'%(dname, seed, n_layers, i),student_training=student_training) 
+    - inference(net, test_loader)) ** 2 for i in range(T)], 0)
     uncertainty = np.sqrt(uncertainty1) + np.sqrt(uncertainty2) + np.sqrt(uncertainty3) + np.sqrt(uncertainty4)
 
     return uncertainty

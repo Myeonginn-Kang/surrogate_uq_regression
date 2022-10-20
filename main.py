@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import DataLoader
 from utils import RegDataset, RegNN, rejection_rmse
 from regression_model import inference
-from uncertainty_score import perturbation_score, gradnorm_score, mc_dropout_score, datafree_kd_score, ensemble_score
+from uncertainty_score import perturbation_score, gradnorm_score, mc_dropout_score, kd_score, ensemble_score
 import sys, os, csv
 
 dname = sys.argv[1]
@@ -40,9 +40,12 @@ Y_tst_hat = inference(net, test_loader).flatten()
 Y_tst = Y_tst.flatten()   
 
 # calcuate the uncertainty scroe. 
-# choose one of the surrogates: 'input_perturbation', 'gradient_norm', 'mc_dropout', 'datafree_kd', 'ensemble'
-if not os.path.exists('./student'):
-    os.mkdir('./student')
+# choose one of the surrogates: 'input_perturbation', 'gradient_norm', 'mc_dropout', 'knowledge_distillation', 'ensemble'
+
+print('method: ', method) 
+
+if not os.path.exists('./KD'):
+    os.mkdir('./KD')
 
 if method == 'input_perturbation':
     uncertainty = perturbation_score(net, test_loader)
@@ -53,13 +56,12 @@ elif method == 'gradient_norm':
 elif method == 'mc_dropout':
     uncertainty = mc_dropout_score(net, test_loader)
     
-elif method == 'datafree_kd':
-    uncertainty = datafree_kd_score(net, test_loader, dname, seed, n_layers)
+elif method == 'knowledge_distillation':
+    uncertainty = kd_score(net, test_loader, dname, seed, n_layers)
     
 elif method == 'ensemble':
     uncertainty = ensemble_score(net, test_loader, X_tst, dname, seed, n_layers)
-
-print('method: ', method)    
+   
 print('uncertainty score: ', uncertainty)
 
 # calculate rejected RMSE with the uncertainty score & save the result

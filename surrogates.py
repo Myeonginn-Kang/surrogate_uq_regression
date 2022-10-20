@@ -54,7 +54,7 @@ def mc_dropout(net, test_loader, cuda = torch.device('cuda:0')):
 
     return y_hat
 
-def datafree_kd(net, test_loader, student_path, student_training = False, dim_z = 50, beta = 1e-5, gamma = 1e-5, batch_size = 50, n_iter = 2000, n_g = 1, n_s = 10, cuda = torch.device('cuda:0')):
+def knowledge_distillation(net, test_loader, student_path, student_training = False, dim_z = 50, beta = 1e-5, gamma = 1e-5, batch_size = 50, n_iter = 2000, n_g = 1, n_s = 10, cuda = torch.device('cuda:0')):
 
     dim_x = net.state_dict()['predict.0.weight'].shape[1]
 
