@@ -5,8 +5,6 @@ from torch.optim import Adam
 
 def training(net, train_loader, val_loader, model_path, max_epochs = 500, cuda = torch.device('cuda:0')):
 
-    cuda = torch.device('cuda:0')
-
     loss_fn = nn.MSELoss()
     optimizer = Adam(net.parameters(), lr=1e-3, weight_decay=1e-5)
 
@@ -60,8 +58,6 @@ def training(net, train_loader, val_loader, model_path, max_epochs = 500, cuda =
     
 
 def inference(net, test_loader, cuda = torch.device('cuda:0')):
-
-    cuda = torch.device('cuda:0')
     
     # inference
     net.eval()
