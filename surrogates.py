@@ -1,5 +1,4 @@
 import numpy as np
-import torch
 from utils import MC_dropout, RegNN, GenNN
 import torch
 import torch.nn as nn
