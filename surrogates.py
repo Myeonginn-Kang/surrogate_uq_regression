@@ -79,7 +79,7 @@ def knowledge_distillation(net, test_loader, student_path, student_training = Fa
                 batch_ytg = net(batch_xg)
                 batch_ysg = student(batch_xg)
 
-                G_loss = torch.mean( - torch.square(batch_ytg - batch_ysg) + beta * torch.sum(torch.square(batch_xg)) + gamma * torch.square(batch_ysg) )
+                G_loss = torch.mean( - torch.square(batch_ytg - batch_ysg) + beta * torch.sum(torch.square(batch_xg), 1) + gamma * torch.square(batch_ysg) )
 
                 optimizerG.zero_grad()
                 G_loss.backward()
